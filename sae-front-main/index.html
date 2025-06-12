@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' https://apis.google.com https://www.googleapis.com https://accounts.google.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; connect-src 'self' https://*.googleapis.com http://localhost:3000; img-src 'self' data: https://*.googleapis.com; font-src 'self' data: https://cdn.jsdelivr.net; frame-src 'self' https://content.googleapis.com https://accounts.google.com;" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Planeo est une application web de planification intelligente qui vous aide à organiser facilement vos rendez-vous et événements.">
+
+    <title>Planéo</title>
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.webp" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    <!-- FullCalendar JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/index.global.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.15/index.global.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.15/index.global.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@fullcalendar/list@6.1.15/index.global.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap5@6.1.15/index.global.min.js"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Google -->
+    <!-- Script pour le SDK OAuth 2 -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Script pour charger les APIs Google -->
+    <script defer src="https://apis.google.com/js/api.js"></script>
+
+    <!-- CSS Litera -->
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/litera/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+
+    <script defer src="src/scripts/requetes.js"></script>
+    <script async src="src/scripts/option.js"></script>
+    <script defer src="src/scripts/sidebar.js"></script>
+    <script defer src="src/scripts/calendrier.js"></script>
+    <script defer src="src/scripts/application.js"></script>
+    <link href="src/styles/index.css" rel="stylesheet" />
+    <link href="src/styles/styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="app-container d-flex min-vh-100 p-3 gap-3">
+        <nav class="sidebar p-3 d-none d-md-flex flex-column rounded-3">
+            <header class="mb-3 bg-white text-center">
+                <img src="assets/images/logoPlaneo.webp" alt="logo de Planéo" class="img-fluid">
+            </header>
+            <form id="search-form" class="flex-grow-1 d-none d-md-flex flex-column p-3">
+                <div class="search-filters">
+                    <div class="datePickers d-flex gap-3 mb-3">
+                        <label for="datepickerFrom-desktop" class="form-label">Du</label>
+                        <input type="date" id="datepickerFrom-desktop" class="form-control form-control-m"
+                            name="dateDebut">
+                        <label for="datepickerTo-desktop" class="form-label">au</label>
+                        <input type="date" id="datepickerTo-desktop" class="form-control form-control-m" name="dateFin">
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="form-label">Type de salle</p>
+                        <div class="d-flex flex-wrap gap-1">
+                            <input type="checkbox" class="btn-check" id="btn-salle-info-desktop">
+                            <label class="btn btn-m btn-outline-dark border-0" for="btn-salle-info-desktop">Informatique</label>
+
+                            <input type="checkbox" class="btn-check" id="btn-salle-ds-desktop">
+                            <label class="btn btn-m btn-outline-dark border-0" for="btn-salle-ds-desktop">DS</label>
+
+                            <input type="checkbox" class="btn-check" id="btn-salle-td-desktop">
+                            <label class="btn btn-m btn-outline-dark border-0" for="btn-salle-td-desktop">TD</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="salle-desktop" class="form-label">Numéro de salle</label>
+                        <select name="salle" id="salle-desktop" class="form-select form-select-m"></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="prof-desktop" class="form-label">Enseignant</label>
+                        <select name="prof" id="prof-desktop" class="form-select form-select-m"></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label for="groupe-desktop" class="form-label">Groupe(s)</label>
+                            <p class="text-end mb-0" id="preferences-desktop"><i class="bi bi-gear-fill"></i> Préférences</p>
+                        </div>
+                        <select name="groupe" id="groupe-desktop" class="form-select form-select-m"></select>
+                    </div>
+                    <fieldset>
+                        <legend class="form-label">Période de la journée</legend>
+                        <div class="mb-3">
+                            <div class="d-flex flex-wrap gap-1">
+                                <input type="radio" class="btn-check" name="periode" id="journee-desktop"
+                                    value="journée entière" checked>
+                                <label class="btn btn-m btn-outline-dark border-0" for="journee-desktop">journée
+                                    entière</label>
+
+                                <input type="radio" class="btn-check" name="periode" id="matin-desktop" value="matin">
+                                <label class="btn btn-m btn-outline-dark border-0" for="matin-desktop">matin</label>
+
+                                <input type="radio" class="btn-check" name="periode" id="ap-desktop" value="après-midi">
+                                <label class="btn btn-m btn-outline-dark border-0" for="ap-desktop">après-midi</label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend class="form-label">Jours à exclure</legend>
+                        <div class="mb-3">
+                            <div class="d-flex flex-wrap gap-1">
+                                <input type="checkbox" class="btn-check" id="lundi-desktop" name="jours" value="1">
+                                <label class="btn btn-m btn-outline-dark border-0" for="lundi-desktop">lundi</label>
+
+                                <input type="checkbox" class="btn-check" id="mardi-desktop" name="jours" value="2">
+                                <label class="btn btn-m btn-outline-dark border-0" for="mardi-desktop">mardi</label>
+
+                                <input type="checkbox" class="btn-check" id="mercredi-desktop" name="jours" value="3">
+                                <label class="btn btn-m btn-outline-dark border-0"
+                                    for="mercredi-desktop">mercredi</label>
+
+                                <input type="checkbox" class="btn-check" id="jeudi-desktop" name="jours" value="4">
+                                <label class="btn btn-m btn-outline-dark border-0" for="jeudi-desktop">jeudi</label>
+
+                                <input type="checkbox" class="btn-check" id="vendredi-desktop" name="jours" value="5">
+                                <label class="btn btn-m btn-outline-dark border-0"
+                                    for="vendredi-desktop">vendredi</label>
+
+                                <input type="checkbox" class="btn-check" id="samedi-desktop" name="jours" value="6">
+                                <label class="btn btn-m btn-outline-dark border-0" for="samedi-desktop">samedi</label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="btn btn-primary mt-auto w-100">Rechercher</button>
+                    </div>
+            </form>
+        </nav>
+
+        <!-- Bouton pour ouvrir le menu sur mobile -->
+        <div class="d-md-none mb-3 position-fixed top-0 start-0 w-100 bg-dark p-2 z-3">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#formMenu">
+                ☰ Recherche
+            </button>
+        </div>
+
+        <main class="calendar-container flex-grow-1">
+            <div id="calendar" class="p-4 rounded-3 bg-white"></div>
+        </main>
+
+        <!-- modale d'affichage des créneaux -->
+        <div id="calendarModal" class="modal">
+            <div class="modal-content bg-white rounded-3 position-relative p-4">
+                <!--croix de fermeture-->
+                <span class="close position-absolute top-0 end-0 mt-2 me-3 fs-4">&times;</span>
+                <h2 id="modalTitle" class="pt-3"></h2>
+                <p id="modalBody"></p>
+                <input type="hidden" id="eventID" />
+            </div>
+        </div>
+    </div>
+
+    <!-- panneau coulissant préférences -->
+    <div id="panel-preferences" class="panel-preferences">
+        <div class="panel-content">
+            <span id="close-panel" class="position-absolute top-0 end-0 m-3 fs-2">&times;</span>
+            <form id="formPreferences">
+                <h2>Préférences</h2>
+                <p>Mes groupes :</p>
+                <div id="containerCheckbox" class="form-check form-switch d-flex flex-wrap row"></div>
+                <button type="submit" class="btn btn-primary mt-3">Enregistrer</button>
+            </form>
+            <!-- Message de confirmation après enregistrement -->
+            <p id="confirmationMessage" class="d-none text-success mt-3">Informations enregistrées avec succès !</p>
+        </div>
+    </div>
+
+    <!-- MEP pour petits écrans -->
+    <div class="offcanvas offcanvas-top" tabindex="-1" id="formMenu">
+        <div class="offcanvas-header">
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form id="formRechercheMobile">
+                <div class="search-filters">
+                    <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+                        <label for="datepickerFrom-mobile" class="form-label">Du</label>
+                        <input type="date" id="datepickerFrom-mobile" class="form-control form-control-m"
+                            name="dateDebut">
+                        <label for="datepickerTo-mobile" class="form-label">au</label>
+                        <input type="date" id="datepickerTo-mobile" class="form-control form-control-m" name="dateFin">
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="form-label">Type de salle</p>
+                        <div class="d-flex flex-wrap gap-1">
+                            <input type="checkbox" class="btn-check" id="btn-salle-info-mobile">
+                            <label class="btn btn-m btn-outline-dark border-0"
+                                for="btn-salle-info-mobile">Informatique</label>
+
+                            <input type="checkbox" class="btn-check" id="btn-salle-ds-mobile">
+                            <label class="btn btn-m btn-outline-dark border-0" for="btn-salle-ds-mobile">DS</label>
+
+                            <input type="checkbox" class="btn-check" id="btn-salle-td-mobile">
+                            <label class="btn btn-m btn-outline-dark border-0" for="btn-salle-td-mobile">TD</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="salle-mobile" class="form-label">Numéro de salle</label>
+                        <select name="salle" id="salle-mobile" class="form-select form-select-m">
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="prof-mobile" class="form-label">Enseignant</label>
+                        <select name="prof" id="prof-mobile" class="form-select form-select-m">
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label for="groupe-mobile" class="form-label">Groupe(s)</label>
+                            <p class="text-end mb-0" id="preferences-mobile"><i class="bi bi-gear-fill"></i> Préférences
+                            </p>
+                        </div>
+                        <select name="groupe" id="groupe-mobile" class="form-select form-select-m">
+                        </select>
+                    </div>
+
+                    <fieldset>
+                        <legend class="form-label">Période de la journée</legend>
+                        <div class="mb-3">
+                            <div class="d-flex flex-wrap gap-1">
+                                <input type="radio" class="btn-check" name="periode" id="journee-mobile"
+                                    value="journée entière" checked>
+                                <label class="btn btn-m btn-outline-dark border-0" for="journee-mobile">journée entière</label>
+
+                                <input type="radio" class="btn-check" name="periode" id="matin-mobile" value="matin">
+                                <label class="btn btn-m btn-outline-dark border-0" for="matin-mobile">matin</label>
+
+                                <input type="radio" class="btn-check" name="periode" id="ap-mobile" value="après-midi">
+                                <label class="btn btn-m btn-outline-dark border-0" for="ap-mobile">après-midi</label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                            <fieldset>
+                                <legend class="form-label">Jours à exclure</legend>
+                                <div class="mb-3">
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <input type="checkbox" class="btn-check" id="lundi-mobile" name="jours"
+                                            value="1">
+                                        <label class="btn btn-m btn-outline-dark border-0"
+                                            for="lundi-mobile">lundi</label>
+
+                                        <input type="checkbox" class="btn-check" id="mardi-mobile" name="jours"
+                                            value="2">
+                                        <label class="btn btn-m btn-outline-dark border-0"
+                                            for="mardi-mobile">mardi</label>
+
+                                        <input type="checkbox" class="btn-check" id="mercredi-mobile" name="jours"
+                                            value="3">
+                                        <label class="btn btn-m btn-outline-dark border-0"
+                                            for="mercredi-mobile">mercredi</label>
+
+                                        <input type="checkbox" class="btn-check" id="jeudi-mobile" name="jours"
+                                            value="4">
+                                        <label class="btn btn-m btn-outline-dark border-0"
+                                            for="jeudi-mobile">jeudi</label>
+
+                                        <input type="checkbox" class="btn-check" id="vendredi-mobile" name="jours"
+                                            value="5">
+                                        <label class="btn btn-m btn-outline-dark border-0"
+                                            for="vendredi-mobile">vendredi</label>
+
+                                        <input type="checkbox" class="btn-check" id="samedi-mobile" name="jours"
+                                            value="6">
+                                        <label class="btn btn-m btn-outline-dark border-0"
+                                            for="samedi-mobile">samedi</label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3 w-100" data-bs-dismiss="offcanvas">Rechercher</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="loading-animation">
+        <div class="spinner"></div>
+        <p class="loading-message">Chargement en cours...</p>
+    </div>
+</body>
+
+</html>

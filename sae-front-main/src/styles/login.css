@@ -1,0 +1,65 @@
+@media (max-width: 450px) {
+    body {
+        margin: 3rem;
+    }
+}
+
+@media (orientation: portrait) {
+    body {
+        overflow: hidden;
+        height: 100%;
+    }
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+.label-input {
+    margin-bottom: 16px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 6px;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container .fa-eye,
+.password-container .fa-eye-slash {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: rgb(126, 126, 126)
+}
+
+button {
+    width: 100%;
+}
+
+img {
+    width: 25rem;
+}
+

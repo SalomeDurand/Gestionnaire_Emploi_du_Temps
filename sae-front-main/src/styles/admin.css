@@ -1,0 +1,47 @@
+@font-face {
+  font-family: 'Calibri';
+  src: url('/assets/fonts/Calibri-Regular/Calibri-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+  
+  body {
+    font-family: 'Calibri', sans-serif; 
+  }
+  
+  .accordion-button {
+    background-color: #ccd8fa !important;
+    color: black;
+  }
+  
+  .accordion-button:not(.collapsed), .accordion-button:hover {
+    background-color: #457afe !important;
+    color: white;
+  }
+
+  label {
+    margin: 0.5rem 0.5rem;
+    white-space: nowrap;
+  }
+  
+  label input {
+    margin-left: 0.5rem;
+    flex: 1;
+  }
+  
+  .accordion-body .col {
+    flex: 0 0 auto;
+    width: 33.33%;
+    padding: 0 0.5rem;
+  }
+  
+  @media (max-width: 992px) {
+    .accordion-body .col {
+      width: 50%; 
+    }
+  }
+  
+  @media (max-width: 750px) {
+    .accordion-body .col {
+      width: 100%; 
+    }
+  }
